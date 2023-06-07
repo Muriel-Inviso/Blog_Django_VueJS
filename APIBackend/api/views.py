@@ -182,6 +182,7 @@ class ArticleViewSet(viewsets.ViewSet):
 
 """
 
+"""
 class ArticleViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
@@ -190,5 +191,10 @@ class ArticleViewSet(
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin
 ):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+"""
+
+class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
