@@ -144,7 +144,7 @@ class ArticleDetails(
 
 """
 
-
+"""
 class ArticleViewSet(viewsets.ViewSet):
     def list(self, request):
         articles = Article.objects.all()
@@ -179,3 +179,16 @@ class ArticleViewSet(viewsets.ViewSet):
         article = Article.objects.get(pk=pk)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+"""
+
+class ArticleViewSet(
+    viewsets.GenericViewSet,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin
+):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
