@@ -4,6 +4,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view, APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import generics
+from rest_framework import mixins
 
 from .serializers import ArticleSerializer
 from .models import Article
@@ -53,6 +55,7 @@ def article_details(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 """
 
+""" 
 class ArticleList(APIView):
     def get(self, request):
         articles = Article.objects.all()
@@ -69,7 +72,6 @@ class ArticleList(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class ArticleDetails(APIView):
     def get_object(self, id):
         try:
@@ -77,22 +79,62 @@ class ArticleDetails(APIView):
 
         except Article.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
+
     def get(self, request, id):
         article = self.get_object(id=id)
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
-    
+
     def put(self, request, id):
         article = self.get_object(id=id)
         serializer = ArticleSerializer(article, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
         article = self.get_object(id=id)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+"""
+
+
+class ArticleList(
+    generics.GenericAPIView,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin
+):
+
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+
+    def get(self, request):
+        return self.list(request)
+
+    def post(self, request):
+        return self.create(request)
+
+
+class ArticleDetails(
+    generics.GenericAPIView,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin
+):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+
+    lookup_field = 'id'
+
+    def get(self, request, id):
+        return self.retrieve(request, id=id)
+
+    def put(self, request, id):
+        return self.update(request, id=id)
+
+    def delete(self, request, id):
+        return self.destroy(request, id=id)
