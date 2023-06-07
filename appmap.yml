@@ -1,0 +1,6 @@
+appmap_dir: tmp\appmap
+language: python
+name: 2 - Blog
+packages:
+- path: APIBackend
+- path: api
